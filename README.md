@@ -1,13 +1,12 @@
 # 🦅 AiDevBird Skills (`aidevbird-skills`)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![X Profile EN](https://img.shields.io/badge/X-@aidevbird-black.svg?logo=x)](https://x.com/aidevbird)
-[![X Profile PL](https://img.shields.io/badge/X-@aidevbird__pl-black.svg?logo=x)](https://x.com/aidevbird_pl)
+[![X Profile](https://img.shields.io/badge/X-@aidevbird-black.svg?logo=x)](https://x.com/aidevbird)
 [![Agent Skills Standard](https://img.shields.io/badge/Standard-Agent%20Skills-brightgreen.svg)](https://github.com/agentskills/agentskills)
 
 Curated, zero-fluff **AI Agent Skills** designed for real-world engineering teams, autonomous coding agents, and high-craft software development.
 
-Maintained by **[AiDevBird](https://x.com/aidevbird)** (EN: [@aidevbird](https://x.com/aidevbird), PL: [@aidevbird_pl](https://x.com/aidevbird_pl)).
+Maintained by **[AiDevBird](https://x.com/aidevbird)** ([@aidevbird](https://x.com/aidevbird)).
 
 ---
 
