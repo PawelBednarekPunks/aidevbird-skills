@@ -1,0 +1,26 @@
+{
+  "name": "@aidevbird/skills",
+  "version": "1.0.0",
+  "description": "Essential, high-craft AI Agent Skills for engineering, git hygiene, and developer workflows.",
+  "homepage": "https://github.com/PawelBednarekPunks/aidevbird-skills",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PawelBednarekPunks/aidevbird-skills.git"
+  },
+  "keywords": [
+    "agent-skills",
+    "ai-agents",
+    "claude-code",
+    "cursor",
+    "openbot",
+    "git",
+    "developer-tools"
+  ],
+  "author": "Paweł Bednarek (AiDevBird)",
+  "license": "MIT",
+  "scripts": {
+    "list": "./scripts/install.sh --list",
+    "check": "./scripts/install.sh --check",
+    "install:global": "./scripts/install.sh --global"
+  }
+}
