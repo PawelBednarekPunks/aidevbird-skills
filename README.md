@@ -56,6 +56,17 @@ Thin [Claude Code commands](./commands/) that invoke the matching skill. Install
 
 ---
 
+## 🐦 Mac Apps by AiDevBird
+
+Native Swift 6 macOS utilities from the same workshop — private by design, one-time Pro purchase, no subscription.
+
+| App | What it does | Links |
+| :--- | :--- | :--- |
+| **Prunebird** | Clean AI agent caches, orphaned git worktrees and stale dev dependencies, and see or kill the local servers holding your ports. Lives in the menu bar. | [Mac App Store](https://apps.apple.com/app/prunebird-dev-port-cleaner/id6827096807?mt=12) · [prunebird.com](https://prunebird.com) |
+| **Panebird** | Window manager: snap windows to halves, thirds and corners with one shortcut or a drag to the edge, and keep each task's apps together in nests. | [Mac App Store](https://apps.apple.com/app/panebird-window-manager/id6821859372?mt=12) · [panebird.com](https://panebird.com) |
+
+---
+
 ## 🛠️ Verification & Testing
 
 Validate metadata and folder naming across all skills in the repository:
