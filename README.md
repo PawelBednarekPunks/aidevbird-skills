@@ -41,6 +41,18 @@ cd aidevbird-skills
 | :--- | :--- | :--- |
 | **[`clean-git-summary`](./skills/clean-git-summary/SKILL.md)** | **Git & Review** | Generates a concise, 3-block technical summary of staged changes or diffs before committing or opening a PR. No AI preambles or filler. |
 | **[`conventional-commit`](./skills/conventional-commit/SKILL.md)** | **Git & Hygiene** | Enforces strict **Conventional Commits v1.0.0** (`feat`, `fix`, `refactor`, `perf`, `chore`) with imperative tone and zero AI attribution watermarks. |
+| **[`create-commit`](./skills/create-commit/SKILL.md)** | **Git & Hygiene** | Creates one verified, task-scoped commit: stages only task files, runs the project's lint/tests, writes a `Why / Changes / Tests` body with a ticket from the branch name. Never pushes. |
+
+---
+
+## ⌨️ Slash Commands
+
+Thin [Claude Code commands](./commands/) that invoke the matching skill. Installed into `.claude/commands` (or `~/.claude/commands` with `--global`); skip them with `--no-commands`.
+
+| Command | Skill | What it does |
+| :--- | :--- | :--- |
+| **[`/create_commit`](./commands/create_commit.md)** | `create-commit` | One verified Conventional Commit for the current task. Optional hint: `/create_commit only src/auth`. |
+| **[`/git_summary`](./commands/git_summary.md)** | `clean-git-summary` | 3-block summary of the working tree, or of `<base>...HEAD` with `/git_summary main`. Read-only. |
 
 ---
 
@@ -61,8 +73,9 @@ npm run check
 We welcome community-driven, pragmatic skills that solve real developer pain points.
 1. Fork the repository.
 2. Add your skill in `skills/<skill-name>/SKILL.md`.
-3. Run `./scripts/install.sh --check` to verify frontmatter.
-4. Submit a Pull Request.
+3. Optionally add a slash command in `commands/<command_name>.md` that invokes the skill.
+4. Run `./scripts/install.sh --check` to verify frontmatter.
+5. Submit a Pull Request.
 
 ---
 
