@@ -66,6 +66,7 @@ validate_skill() {
   [[ -n "$name" ]] || { echo "$skill: frontmatter has no 'name'"; rc=1; }
   [[ -z "$name" || "$name" == "$skill" ]] || { echo "$skill: frontmatter name '$name' does not match directory"; rc=1; }
   [[ -n "$desc" ]] || { echo "$skill: frontmatter has no 'description'"; rc=1; }
+  (( ${#desc} <= 300 )) || { echo "$skill: description is ${#desc} chars, max 300 (see STYLE.md)"; rc=1; }
   return $rc
 }
 
@@ -79,8 +80,8 @@ validate_command() {
 usage() {
   cat <<USAGE
 Usage:
-  $0 --global                 Install all skills (~/.agents/skills) and commands (~/.claude/commands)
-  $0 /path/to/project         Install into a specific project (.agents/skills, .claude/commands)
+  $0 --global                 Install all skills (~/.agents/skills, linked in ~/.claude/skills) and commands
+  $0 /path/to/project         Install into a specific project (.agents/skills, .claude/skills, .claude/commands)
   $0 --skill <name> --global  Install a specific skill (no commands)
   $0 --no-commands --global   Install skills only, skip slash commands
   $0 --list                   List all available skills and commands
@@ -110,12 +111,14 @@ fi
 
 if [[ "$ACTION" == "check" ]]; then
   echo "==> Validating skills in $SKILLS_DIR"
+  failed=0
   for s in $(discover_skills); do
-    validate_skill "$s" && echo "  ✔ $s"
+    if validate_skill "$s"; then echo "  ✔ $s"; else failed=1; fi
   done
   for c in $(discover_commands); do
-    validate_command "$c" && echo "  ✔ /$c"
+    if validate_command "$c"; then echo "  ✔ /$c"; else failed=1; fi
   done
+  [[ "$failed" == 0 ]] || { echo "==> Validation failed"; exit 1; }
   echo "==> All skills OK"
   exit 0
 fi
@@ -124,13 +127,15 @@ fi
 
 if [[ "$TARGET" == "--global" ]]; then
   DEST_DIR="$HOME/.agents/skills"
+  CLAUDE_SKILLS_DIR="$HOME/.claude/skills"
   CMD_DEST_DIR="$HOME/.claude/commands"
 else
   DEST_DIR="$TARGET/.agents/skills"
+  CLAUDE_SKILLS_DIR="$TARGET/.claude/skills"
   CMD_DEST_DIR="$TARGET/.claude/commands"
 fi
 
-mkdir -p "$DEST_DIR"
+mkdir -p "$DEST_DIR" "$CLAUDE_SKILLS_DIR"
 
 SKILLS_TO_INSTALL="${ONLY_SKILL:-$(discover_skills)}"
 
@@ -138,6 +143,10 @@ for s in $SKILLS_TO_INSTALL; do
   validate_skill "$s"
   rm -rf "$DEST_DIR/$s"
   cp -R "$SKILLS_DIR/$s" "$DEST_DIR/$s"
+  # Claude Code reads .claude/skills; link it to the shared copy (skip if the user put a real folder there)
+  if [[ -L "$CLAUDE_SKILLS_DIR/$s" || ! -e "$CLAUDE_SKILLS_DIR/$s" ]]; then
+    ln -sfn "$DEST_DIR/$s" "$CLAUDE_SKILLS_DIR/$s"
+  fi
   echo "✔ Installed $s -> $DEST_DIR/$s"
 done
 
@@ -152,6 +161,6 @@ if [[ "$WITH_COMMANDS" == 1 ]]; then
   done
 fi
 
-echo "Done! Installed skills into $DEST_DIR"
+echo "Done! Installed skills into $DEST_DIR (linked in $CLAUDE_SKILLS_DIR)"
 [[ "$WITH_COMMANDS" == 1 ]] && echo "      Installed commands into $CMD_DEST_DIR"
 exit 0

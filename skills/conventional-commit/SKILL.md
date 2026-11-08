@@ -1,56 +1,29 @@
 ---
 name: conventional-commit
-description: Format standard, machine-readable Conventional Commits (v1.0.0) from git status or active changes. Enforces standard types, optional scope, imperative present tense, and zero AI attribution. Use when authoring git commit messages or validating branch history.
+description: Write a Conventional Commits v1.0.0 message for the current changes. Use when writing or checking a commit message or PR title.
 ---
 
-# Conventional Commit (`conventional-commit`)
+# Conventional Commit
 
-Generate clean, semantic git commit messages adhering strictly to the **Conventional Commits v1.0.0** specification.
-
----
-
-## ⚡ When to Use
-
-* When drafting commit messages for staged git changes.
-* When squashing or preparing Pull Request titles.
-* When asked to *"Write a commit message"* or *"Commit these changes"*.
-
----
-
-## 📐 Conventional Commit Format
+Format:
 
 ```text
-<type>(<optional-scope>): <description>
+<type>(<scope>): <description>
 
-[optional body explaining motivation and context]
+[body: why, not what]
 
-[optional footer(s), e.g., BREAKING CHANGE: ... or Closes #123]
+[footer: BREAKING CHANGE: ..., Closes #123]
 ```
 
-### Allowed Types
+Types: `feat` new behavior · `fix` bug fix · `refactor` no behavior change · `perf` speed ·
+`docs` docs only · `test` tests only · `build` deps/build · `ci` pipelines · `chore` other upkeep · `style` formatting.
 
-| Type | When to Use |
-| :--- | :--- |
-| **`feat`** | A new feature or user-facing functionality. |
-| **`fix`** | A bug fix or patch. |
-| **`refactor`** | Code change that neither fixes a bug nor adds a feature. |
-| **`perf`** | Performance optimization or latency reduction. |
-| **`docs`** | Documentation changes only (README, docstrings, markdown). |
-| **`test`** | Adding missing tests or correcting existing tests. |
-| **`chore`** | Maintenance, tooling configuration, dependency bumps. |
-| **`ci`** | Changes to CI/CD pipelines and automation scripts. |
+Rules:
+- Base it on `git diff --cached` (or `git diff` if nothing is staged), not on the conversation.
+- Imperative, present tense: "add", not "added"/"adds". Lowercase header, no trailing period, ≤ 72 chars.
+- Scope = module, package or app touched. Omit if none fits.
+- Breaking change: `!` after type/scope and a `BREAKING CHANGE:` footer.
+- One logical change per commit. If the diff mixes two, say so and propose a split.
+- No AI attribution (`Co-Authored-By`, "Generated with") unless the repo's own rules require it.
 
----
-
-## 🔍 Generation Rules
-
-1. **Imperative & Present Tense:** Always write *"add feature"*, never *"added feature"* or *"adds feature"*.
-2. **Casing & Punctuation:**
-   * Entire header `<type>(<scope>): <description>` must be lowercase.
-   * Do not end the description with a period (`.`).
-   * Keep the first line under 72 characters.
-3. **Scope:** Use the module, package, or component name as the scope (e.g., `feat(auth): ...`, `fix(ui): ...`).
-4. **Breaking Changes:**
-   * Add `!` after the type/scope for breaking changes: `feat(api)!: drop v1 endpoints`.
-   * Include `BREAKING CHANGE: <explanation>` in the footer.
-5. **Zero AI Attribution:** Never append `Co-Authored-By`, `Generated with AI`, or model watermarks.
+Example: `fix(auth): refresh expired token before retrying request`
