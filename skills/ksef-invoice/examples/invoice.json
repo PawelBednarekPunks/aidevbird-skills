@@ -1,0 +1,42 @@
+{
+  "number": "FV/1/11/2026",
+  "issue_date": "2026-11-08",
+  "sale_date": "2026-11-08",
+  "due_date": "2026-11-22",
+  "currency": "PLN",
+  "place": "Warszawa",
+  "seller": {
+    "name": "Jan Kowalski Software",
+    "tax_id": "1234560007",
+    "address": {
+      "line1": "ul. Prosta 1/2",
+      "line2": "00-001 Warszawa"
+    },
+    "email": "jan@example.com"
+  },
+  "buyer": {
+    "name": "Acme sp. z o.o.",
+    "tax_id": "9876540016",
+    "country": "PL",
+    "address": {
+      "line1": "ul. Długa 5",
+      "line2": "30-001 Kraków"
+    }
+  },
+  "lines": [
+    {
+      "description": "Programowanie 10/2026",
+      "qty": 160,
+      "unit": "godz.",
+      "unit_net": 150,
+      "vat_rate": "23"
+    },
+    {
+      "description": "Hosting",
+      "qty": 1,
+      "unit_net": 99.99,
+      "vat_rate": "23"
+    }
+  ],
+  "iban": "PL61 1090 1014 0000 0712 1981 2874"
+}

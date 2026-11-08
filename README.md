@@ -37,11 +37,18 @@ cd aidevbird-skills
 
 ## 📚 Available Skills
 
+Every skill is written to be **token-lean**: a description under 300 characters (it loads in every session), a short body, and scripts for anything deterministic. See [STYLE.md](STYLE.md).
+
 | Skill | Category | Description |
 | :--- | :--- | :--- |
-| **[`clean-git-summary`](./skills/clean-git-summary/SKILL.md)** | **Git & Review** | Generates a concise, 3-block technical summary of staged changes or diffs before committing or opening a PR. No AI preambles or filler. |
-| **[`conventional-commit`](./skills/conventional-commit/SKILL.md)** | **Git & Hygiene** | Enforces strict **Conventional Commits v1.0.0** (`feat`, `fix`, `refactor`, `perf`, `chore`) with imperative tone and zero AI attribution watermarks. |
-| **[`create-commit`](./skills/create-commit/SKILL.md)** | **Git & Hygiene** | Creates one verified, task-scoped commit: stages only task files, runs the project's lint/tests, writes a `Why / Changes / Tests` body with a ticket from the branch name. Never pushes. |
+| **[`clean-git-summary`](./skills/clean-git-summary/SKILL.md)** | **Git** | 3-block technical summary of a diff for commits and PR descriptions. |
+| **[`conventional-commit`](./skills/conventional-commit/SKILL.md)** | **Git** | Conventional Commits v1.0.0 messages: imperative, scoped, no AI watermarks. |
+| **[`create-commit`](./skills/create-commit/SKILL.md)** | **Git** | One verified, task-scoped commit: only task files, lint and tests first, ticket from the branch. Never pushes. |
+| **[`angular-conventions`](./skills/angular-conventions/SKILL.md)** | **Frontend** | Modern Angular (v18+): signals, standalone, OnPush, `inject()`, built-in control flow. |
+| **[`xlsx-toolkit`](./skills/xlsx-toolkit/SKILL.md)** | **Office** | Create, edit and check Excel/CSV files with live formulas. Ships `inspect_xlsx.py` to find formula errors. |
+| **[`invoice-processing`](./skills/invoice-processing/SKILL.md)** | **Finance** | Invoices → JSON → spreadsheet. `validate_invoice.py` checks totals, VAT, Polish NIP, IBAN and duplicates. |
+| **[`appstore-payouts-to-excel`](./skills/appstore-payouts-to-excel/SKILL.md)** | **Finance · Indie** | App Store Connect reports → Excel by currency, country and app, converted at NBP rates. |
+| **[`ksef-invoice`](./skills/ksef-invoice/README.md)** | **Finance · 🇵🇱** | Polish KSeF e-invoices (FA(3) XML): invoices, corrections, advances and final settlements, validated against the official Ministry of Finance XSD. [Poradnik po polsku](./skills/ksef-invoice/README.md). |
 
 ---
 
@@ -83,7 +90,7 @@ npm run check
 
 We welcome community-driven, pragmatic skills that solve real developer pain points.
 1. Fork the repository.
-2. Add your skill in `skills/<skill-name>/SKILL.md`.
+2. Add your skill in `skills/<skill-name>/SKILL.md`, following [STYLE.md](STYLE.md). Written from scratch — no text copied from other skill repos.
 3. Optionally add a slash command in `commands/<command_name>.md` that invokes the skill.
 4. Run `./scripts/install.sh --check` to verify frontmatter.
 5. Submit a Pull Request.

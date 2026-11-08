@@ -1,0 +1,43 @@
+{
+  "number": "FZ/1/11/2026",
+  "issue_date": "2026-11-08",
+  "sale_date": "2026-11-08",
+  "currency": "PLN",
+  "place": "Warszawa",
+  "seller": {
+    "name": "Jan Kowalski Software",
+    "tax_id": "1234560007",
+    "address": {
+      "line1": "ul. Prosta 1/2",
+      "line2": "00-001 Warszawa"
+    },
+    "email": "jan@example.com"
+  },
+  "buyer": {
+    "name": "Acme sp. z o.o.",
+    "tax_id": "9876540016",
+    "country": "PL",
+    "address": {
+      "line1": "ul. Długa 5",
+      "line2": "30-001 Kraków"
+    }
+  },
+  "iban": "PL61 1090 1014 0000 0712 1981 2874",
+  "type": "advance",
+  "paid": 5000,
+  "paid_date": "2026-11-05",
+  "order_lines": [
+    {
+      "description": "Aplikacja mobilna",
+      "qty": 1,
+      "unit_net": 10000,
+      "vat_rate": "23"
+    },
+    {
+      "description": "Szkolenie",
+      "qty": 2,
+      "unit_net": 500,
+      "vat_rate": "8"
+    }
+  ]
+}
