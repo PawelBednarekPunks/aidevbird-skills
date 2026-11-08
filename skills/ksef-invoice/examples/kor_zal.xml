@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Faktura xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
+  <Naglowek>
+    <KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>
+    <WariantFormularza>3</WariantFormularza>
+    <DataWytworzeniaFa>2026-11-08T22:25:52Z</DataWytworzeniaFa>
+    <SystemInfo>aidevbird ksef-invoice</SystemInfo>
+  </Naglowek>
+  <Podmiot1>
+    <DaneIdentyfikacyjne>
+      <NIP>1234560007</NIP>
+      <Nazwa>Jan Kowalski Software</Nazwa>
+    </DaneIdentyfikacyjne>
+    <Adres>
+      <KodKraju>PL</KodKraju>
+      <AdresL1>ul. Prosta 1/2</AdresL1>
+      <AdresL2>00-001 Warszawa</AdresL2>
+    </Adres>
+    <DaneKontaktowe>
+      <Email>jan@example.com</Email>
+    </DaneKontaktowe>
+  </Podmiot1>
+  <Podmiot2>
+    <DaneIdentyfikacyjne>
+      <NIP>9876540016</NIP>
+      <Nazwa>Acme sp. z o.o.</Nazwa>
+    </DaneIdentyfikacyjne>
+    <Adres>
+      <KodKraju>PL</KodKraju>
+      <AdresL1>ul. Długa 5</AdresL1>
+      <AdresL2>30-001 Kraków</AdresL2>
+    </Adres>
+    <JST>2</JST>
+    <GV>2</GV>
+  </Podmiot2>
+  <Fa>
+    <KodWaluty>PLN</KodWaluty>
+    <P_1>2026-11-12</P_1>
+    <P_1M>Warszawa</P_1M>
+    <P_2>FZK/1/11/2026</P_2>
+    <P_13_1>-1000.00</P_13_1>
+    <P_14_1>-230.00</P_14_1>
+    <P_13_2>0.00</P_13_2>
+    <P_14_2>0.00</P_14_2>
+    <P_15>-1230.00</P_15>
+    <Adnotacje>
+      <P_16>2</P_16>
+      <P_17>2</P_17>
+      <P_18>2</P_18>
+      <P_18A>2</P_18A>
+      <Zwolnienie>
+        <P_19N>1</P_19N>
+      </Zwolnienie>
+      <NoweSrodkiTransportu>
+        <P_22N>1</P_22N>
+      </NoweSrodkiTransportu>
+      <P_23>2</P_23>
+      <PMarzy>
+        <P_PMarzyN>1</P_PMarzyN>
+      </PMarzy>
+    </Adnotacje>
+    <RodzajFaktury>KOR_ZAL</RodzajFaktury>
+    <PrzyczynaKorekty>Częściowy zwrot zaliczki</PrzyczynaKorekty>
+    <TypKorekty>2</TypKorekty>
+    <DaneFaKorygowanej>
+      <DataWystFaKorygowanej>2026-11-08</DataWystFaKorygowanej>
+      <NrFaKorygowanej>FZ/1/11/2026</NrFaKorygowanej>
+      <NrKSeF>1</NrKSeF>
+      <NrKSeFFaKorygowanej>1234560007-20261105-ABCDEF-123456-0F</NrKSeFFaKorygowanej>
+    </DaneFaKorygowanej>
+    <FaWiersz>
+      <NrWierszaFa>1</NrWierszaFa>
+      <P_7>Zaliczka na aplikację mobilną</P_7>
+      <P_8A>szt.</P_8A>
+      <P_8B>1</P_8B>
+      <P_9A>3736.92</P_9A>
+      <P_11>3736.92</P_11>
+      <P_12>23</P_12>
+      <StanPrzed>1</StanPrzed>
+    </FaWiersz>
+    <FaWiersz>
+      <NrWierszaFa>2</NrWierszaFa>
+      <P_7>Zaliczka na szkolenie</P_7>
+      <P_8A>szt.</P_8A>
+      <P_8B>1</P_8B>
+      <P_9A>373.69</P_9A>
+      <P_11>373.69</P_11>
+      <P_12>8</P_12>
+      <StanPrzed>1</StanPrzed>
+    </FaWiersz>
+    <FaWiersz>
+      <NrWierszaFa>3</NrWierszaFa>
+      <P_7>Zaliczka na aplikację mobilną</P_7>
+      <P_8A>szt.</P_8A>
+      <P_8B>1</P_8B>
+      <P_9A>2736.92</P_9A>
+      <P_11>2736.92</P_11>
+      <P_12>23</P_12>
+    </FaWiersz>
+    <FaWiersz>
+      <NrWierszaFa>4</NrWierszaFa>
+      <P_7>Zaliczka na szkolenie</P_7>
+      <P_8A>szt.</P_8A>
+      <P_8B>1</P_8B>
+      <P_9A>373.69</P_9A>
+      <P_11>373.69</P_11>
+      <P_12>8</P_12>
+    </FaWiersz>
+    <Platnosc>
+      <FormaPlatnosci>6</FormaPlatnosci>
+      <RachunekBankowy>
+        <NrRB>61109010140000071219812874</NrRB>
+      </RachunekBankowy>
+    </Platnosc>
+  </Fa>
+</Faktura>

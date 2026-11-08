@@ -1,6 +1,6 @@
-# ksef-invoice — e-faktury KSeF z agentem AI
+# ksef-invoice - e-faktury KSeF z agentem AI
 
-Skill dla Claude Code, Cursora, Codexa i innych agentów AI. **Wystawia, sprawdza i odczytuje faktury KSeF** w formacie FA(3), w tym **faktury zwykłe, korygujące, zaliczkowe i rozliczające**. Każdy plik jest sprawdzany na **oficjalnym schemacie XSD Ministerstwa Finansów**, a nie na „pamięci” modelu AI.
+Skill dla Claude Code, Cursora, Codexa i innych agentów AI. Wystawia, sprawdza, odczytuje i koryguje faktury KSeF w formacie FA(3), w tym faktury zwykłe, korygujące, zaliczkowe, rozliczające oraz korekty zaliczek i rozliczeń. Każdy plik jest sprawdzany na oficjalnym schemacie XSD Ministerstwa Finansów wbudowanym w repozytorium.
 
 ![Demo: instalacja przez npx, faktura, korekta, zaliczka, rozliczenie, odrzucony plik i zestawienie w Excelu](../../assets/ksef-invoice-demo.gif)
 
@@ -8,7 +8,7 @@ Skill dla Claude Code, Cursora, Codexa i innych agentów AI. **Wystawia, sprawdz
 
 > Ten plik jest dla ludzi. Agent czyta tylko krótki [`SKILL.md`](SKILL.md), żeby nie zużywać tokenów.
 
-**Spis treści:** [Czym jest KSeF](#czym-jest-ksef-w-30-sekund) · [Co daje skill](#co-daje-ten-skill) · [Instalacja krok po kroku](#instalacja-krok-po-kroku) · [Pierwsza faktura](#pierwsza-faktura--krok-po-kroku) · [Gotowe polecenia](#gotowe-polecenia-do-skopiowania) · [Jak wysłać do KSeF](#jak-wysłać-fakturę-do-ksef) · [Problemy](#gdy-coś-nie-działa) · [Dla zaawansowanych](#dla-zaawansowanych-ręczne-użycie-skryptu)
+**Spis treści:** [Czym jest KSeF](#czym-jest-ksef-w-30-sekund) . [Co daje skill](#co-daje-ten-skill) . [Instalacja krok po kroku](#instalacja-krok-po-kroku) . [Pierwsza faktura](#pierwsza-faktura---krok-po-kroku) . [Gotowe polecenia](#gotowe-polecenia-do-skopiowania) . [Jak wysłać do KSeF](#jak-wysłać-fakturę-do-ksef) . [Problemy](#gdy-coś-nie-działa) . [Dla zaawansowanych](#dla-zaawansowanych-ręczne-użycie-skryptu)
 
 ---
 
@@ -33,17 +33,20 @@ Zapowiedziano okres bez kar za błędy w KSeF do końca 2026 r. Źródła różn
 | Twoja sytuacja | Co robi skill |
 | :--- | :--- |
 | Muszę wystawić e-fakturę i nie chcę płacić za program | Z opisu w zwykłym języku tworzy poprawny plik XML FA(3). |
-| Pomyliłem się albo dałem klientowi rabat | Tworzy **fakturę korygującą** na podstawie pliku XML oryginału. |
-| Klient płaci zaliczkę | Tworzy **fakturę zaliczkową** i sam rozbija wpłatę na stawki VAT. |
-| Kończę zlecenie, w którym były zaliczki | Tworzy **fakturę rozliczającą**, która odejmuje zaliczki i pokazuje kwotę do dopłaty. |
-| KSeF odrzucił moją fakturę | Sprawdza XML na oficjalnym XSD i tłumaczy błąd po ludzku. |
+| Pomyliłem się albo dałem klientowi rabat | Tworzy **fakturę korygującą** (`KOR`) na podstawie pliku XML oryginału (`correct`). |
+| Klient płaci zaliczkę | Tworzy **fakturę zaliczkową** (`ZAL`) i sam rozbija wpłatę na stawki VAT. |
+| Kończę zlecenie, w którym były zaliczki | Tworzy **fakturę rozliczającą** (`ROZ`), która odejmuje zaliczki i pokazuje kwotę do dopłaty. |
+| Muszę skorygować zaliczkę albo fakturę rozliczającą | Tworzy **korektę zaliczki** (`KOR_ZAL`) lub **korektę rozliczenia** (`KOR_ROZ`) z referencjami wymaganymi przez KSeF. |
+| Sprzedaję do szkoły, urzędu (JST), grupy VAT lub oddziału | Uzupełnia sekcję **Podmiot3** (odbiorca, rola JST 8 lub grupa VAT 10) i odpowiednie znaczniki w `Podmiot2`. |
+| Sprzedaję towary lub usługi z oznaczeniem GTU | Dodaje kody **GTU_01..GTU_13** do pozycji faktury (`FaWiersz/GTU`) lub zamówienia (`ZamowienieWiersz/GTUZ`). |
+| KSeF odrzucił moją fakturę albo mam cały folder plików | Sprawdza pojedynczy plik, katalog lub glob na lokalnym XSD, wypisuje podsumowanie JSON i opcjonalny raport CSV (`--csv`). |
 | Mam 40 faktur kosztowych z KSeF w XML | Zamienia je na zestawienie w Excelu (razem ze skillami `invoice-processing` i `xlsx-toolkit`). |
 
 **Czego skill nie robi (celowo):**
 
 - **Nie wysyła niczego do KSeF** i nigdy nie prosi o Twój token, certyfikat ani logowanie. Plik XML wysyłasz sam (patrz [Jak wysłać fakturę do KSeF](#jak-wysłać-fakturę-do-ksef)).
-- **Nie decyduje o podatkach.** Stawkę VAT, podstawę zwolnienia, odwrotne obciążenie i datę ujęcia korekty wybierasz Ty albo Twój księgowy. Skill może jedynie zwrócić uwagę na wątpliwości.
-- **Jeszcze nie obsługuje:** korekty faktury zaliczkowej ani rozliczającej, procedury marży, nowych środków transportu, JST, grup VAT i załączników.
+- **Nie decyduje o podatkach.** Stawkę VAT, podstawę zwolnienia, odwrotne obciążenie, kody GTU i datę ujęcia korekty wybierasz Ty albo Twój księgowy. Skill może jedynie zwrócić uwagę na wątpliwości.
+- **Nie obsługuje:** procedury marży, wewnątrzwspólnotowej dostawy nowych środków transportu i załączników.
 
 ---
 
@@ -57,7 +60,7 @@ Wystarczy jeden z nich:
 
 ### Krok 2. Zainstaluj skille
 
-Otwórz **Terminal** (na Macu: ⌘ + spacja, wpisz „Terminal”, Enter) i wklej:
+Otwórz **Terminal** i wklej:
 
 ```bash
 npx skills add PawelBednarekPunks/aidevbird-skills
@@ -87,13 +90,13 @@ W tym folderze agent będzie trzymał dane Twojej firmy (`ksef-firma.json`) i ws
 
 - **Claude Code w terminalu:** w folderze `~/Faktury` wpisz `claude`.
 - **Aplikacja Claude, zakładka Code:** wybierz folder `~/Faktury` jako folder projektu.
-- **Cursor:** *File → Open Folder* i wybierz `~/Faktury`.
+- **Cursor:** *File -> Open Folder* i wybierz `~/Faktury`.
 
-Przy pierwszej fakturze agent może poprosić o zgodę na instalację biblioteki `lxml` (potrzebnej do sprawdzania XML) i na pobranie oficjalnego schematu z `crd.gov.pl`. Obie rzeczy dzieją się tylko raz.
+Przy pierwszej fakturze agent może poprosić o zgodę na instalację biblioteki `lxml` (potrzebnej do walidacji XML). Schemat XSD FA(3) jest wbudowany w repozytorium, więc walidacja działa bez dostępu do internetu.
 
 ---
 
-## Pierwsza faktura — krok po kroku
+## Pierwsza faktura - krok po kroku
 
 **1. Napisz do agenta, na przykład:**
 
@@ -118,7 +121,7 @@ Przy pierwszej fakturze agent może poprosić o zgodę na instalację biblioteki
 **4. Dostajesz podsumowanie i plik**, na przykład:
 
 ```text
-Faktura VAT FV/1/11/2026 — Acme sp. z o.o.
+Faktura VAT FV/1/11/2026 - Acme sp. z o.o.
 23%: netto 24 000,00 zł, VAT 5 520,00 zł
 Razem brutto: 29 520,00 zł
 Plik: ~/Faktury/FV-1-11-2026.xml (zgodny ze schematem FA(3))
@@ -131,7 +134,7 @@ Następny krok: wyślij plik w Aplikacji Podatnika KSeF lub w programie księgow
 
 ## Gotowe polecenia do skopiowania
 
-Skill uruchamia się sam, gdy w wiadomości pojawi się coś o **KSeF, e-fakturze, fakturze XML, FA(3), korekcie albo zaliczce**. Jeśli agent go nie użyje, dopisz na początku: **„Użyj skilla ksef-invoice.”** W Claude Code możesz też wpisać po prostu `/ksef-invoice`.
+Skill uruchamia się sam, gdy w wiadomości pojawi się coś o **KSeF, e-fakturze, fakturze XML, FA(3), korekcie albo zaliczce**. Jeśli agent go nie użyje, dopisz na początku: **Użyj skilla ksef-invoice.** W Claude Code możesz też wpisać po prostu `/ksef-invoice`.
 
 ### Zwykła faktura
 
@@ -151,21 +154,23 @@ Skill uruchamia się sam, gdy w wiadomości pojawi się coś o **KSeF, e-fakturz
 
 > Klient dostał 10% rabatu od faktury FV-3-11-2026.xml. Zrób korektę.
 
-Najprościej trzymać oryginał w tym samym folderze. Agent odczyta z niego pozycje „przed” i zapyta tylko o to, co się zmienia. Na korekcie kwoty są ujemne (albo dodatnie, jeśli korekta podnosi cenę).
+Najprościej trzymać oryginał w tym samym folderze. Polecenie `correct` odczyta z niego pozycje przed korektą i nałoży zmiany. Na korekcie zmniejszającej kwoty są ujemne.
 
-### Zaliczka i rozliczenie
+### Zaliczka, rozliczenie oraz ich korekty
 
 > Klient Acme wpłacił 5000 zł zaliczki 5 listopada na zamówienie: aplikacja mobilna 10 000 zł netto (VAT 23%) i 2 szkolenia po 500 zł netto (VAT 8%). Wystaw fakturę zaliczkową.
 
 > Skończyłem zlecenie dla Acme. Wystaw fakturę rozliczającą do zaliczki FZ-1-11-2026.xml (numer KSeF zaliczki: 1234560007-20261105-ABCDEF-123456-0F).
 
-Agent sam rozbije zaliczkę na stawki VAT. W fakturze rozliczającej odejmie zaliczki i pokaże kwotę do dopłaty (w tym przykładzie 8380,00 zł z 13 380,00 zł).
+> Klientowi zwróciłem część zaliczki z FZ-1-11-2026.xml. Wystaw korektę faktury zaliczkowej (KOR_ZAL).
+
+> Po wystawieniu faktury rozliczającej FV-5-12-2026.xml przyznaliśmy rabat na szkolenie. Wystaw korektę faktury rozliczającej (KOR_ROZ).
 
 ### Sprawdzanie i zestawienia
 
 > KSeF odrzucił plik faktura.xml. Sprawdź, co jest nie tak, i popraw.
 
-> Sprawdź wszystkie pliki XML w tym folderze.
+> Sprawdź wszystkie pliki XML w tym folderze i zapisz raport błędów do CSV.
 
 > Zrób zestawienie w Excelu z faktur kosztowych w folderze ksef-pobrane/: numer, sprzedawca, NIP, netto, VAT, brutto, termin płatności.
 
@@ -187,14 +192,13 @@ Najpierw możesz przetestować wysyłkę w **środowisku testowym KSeF**, które
 
 | Problem | Rozwiązanie |
 | :--- | :--- |
-| Agent nie używa skilla | Zacznij wiadomość od „Użyj skilla ksef-invoice” albo wpisz `/ksef-invoice`. Sprawdź, czy instalacja się powiodła: `ls ~/.claude/skills`. |
-| `lxml missing` | Pozwól agentowi zainstalować bibliotekę albo wpisz `python3 -m pip install --user lxml`. |
-| `cannot load FA(3) schema` | Brak internetu przy pierwszym uruchomieniu. Połącz się i spróbuj ponownie. |
-| `seller NIP ... fails checksum` | W NIP-ie jest literówka. Sprawdź go np. w wykazie podatników VAT (biała lista). |
-| `xsd line ...: ... is not an element of the set` | Niedozwolona wartość, np. stawka 24% albo zły kod waluty. Agent wyjaśni, co wpisać. |
-| `... != lines` | Suma nie zgadza się z pozycjami, czyli faktura była edytowana ręcznie. Agent wskaże pole. |
-| `correction needs corrects...` | Do korekty potrzebny jest numer i data faktury korygowanej. Podaj je albo wskaż plik XML oryginału. |
-| `not supported` | Ten rodzaj faktury nie jest jeszcze obsługiwany (patrz ograniczenia wyżej). |
+| Agent nie używa skilla | Zacznij wiadomość od "Użyj skilla ksef-invoice" albo wpisz `/ksef-invoice`. Sprawdź, czy instalacja się powiodła: `ls ~/.claude/skills`. |
+| `Brak biblioteki lxml` | Pozwól agentowi zainstalować bibliotekę albo wpisz `python3 -m pip install --user lxml`. |
+| `Nie można wczytać schematu XSD FA(3)` | Sprawdź obecność katalogu `skills/ksef-invoice/xsd/1-0E` lub zmienną środowiskową `KSEF_SCHEMA_DIR`. |
+| `Nieprawidłowa suma kontrolna NIP ...` | W NIP-ie jest literówka. Sprawdź go w wykazie podatników VAT (biała lista). |
+| `Błąd XSD (linia ...)` | Niedozwolona wartość lub kolejność pól, np. stawka 24% albo zły kod waluty. Komunikat wskaże linię i pole. |
+| `Pole P_13_x ... nie zgadza się z sumą pozycji` | Suma nie zgadza się z pozycjami, czyli faktura była edytowana ręcznie. Przebuduj plik poleceniem `build`. |
+| `Oryginał nie ma numeru KSeF` | Polecenie `correct` wymaga numeru KSeF oryginału (`ksef_number` w pliku zmian). Dla faktur spoza KSeF użyj `build` z `type: "correction"`. |
 
 ---
 
@@ -211,23 +215,32 @@ python3 scripts/ksef_fa3.py build examples/invoice.json ~/Faktury/test.xml
 ```
 
 ```bash
-python3 scripts/ksef_fa3.py validate ~/Faktury/test.xml
+python3 scripts/ksef_fa3.py validate ~/Faktury/ --csv ~/Faktury/raport.csv
 ```
 
 ```bash
 python3 scripts/ksef_fa3.py read ~/Faktury/test.xml
 ```
 
+```bash
+python3 scripts/ksef_fa3.py correct examples/invoice.xml zmiany.json ~/Faktury/korekta.xml
+```
+
 Każde polecenie wypisuje jedną linię JSON. Kod wyjścia `0` oznacza, że wszystko jest w porządku, `1` że faktura ma błędy (lista w `issues`), a `2` błąd uruchomienia (brak pliku albo `lxml`).
+
+Polecenie `validate` przyjmuje pojedynczy plik, katalog albo wzorzec glob i zwraca:
+`{"files":[{"file":"...","status":"ok","issues":[]}],"summary":{"ok":1,"issues":0}}`.
 
 ### Przykładowe pliki
 
 | Plik | Co pokazuje |
 | :--- | :--- |
-| [`examples/invoice.json`](examples/invoice.json) | Zwykła faktura VAT |
-| [`examples/correction.json`](examples/correction.json) | Korekta: rabat 10 godzin, oryginał w KSeF |
-| [`examples/advance.json`](examples/advance.json) | Zaliczka 5000 zł na zamówienie z dwiema stawkami VAT |
-| [`examples/final.json`](examples/final.json) | Rozliczenie zamówienia po zaliczce |
+| [`examples/invoice.json`](examples/invoice.json) | Zwykła faktura VAT (`VAT`) |
+| [`examples/correction.json`](examples/correction.json) | Korekta zwykłej faktury (`KOR`), oryginał w KSeF |
+| [`examples/advance.json`](examples/advance.json) | Zaliczka 5000 zł na zamówienie z dwiema stawkami VAT (`ZAL`) |
+| [`examples/final.json`](examples/final.json) | Rozliczenie zamówienia po zaliczce (`ROZ`) |
+| [`examples/kor_zal.json`](examples/kor_zal.json) | Korekta faktury zaliczkowej (`KOR_ZAL`) |
+| [`examples/kor_roz.json`](examples/kor_roz.json) | Korekta faktury rozliczającej (`KOR_ROZ`) |
 
 Obok każdego pliku JSON leży wygenerowany z niego XML.
 
@@ -235,7 +248,7 @@ Obok każdego pliku JSON leży wygenerowany z niego XML.
 
 | Pole | Wymagane | Opis | Pole w FA(3) |
 | :--- | :--- | :--- | :--- |
-| `type` | nie | `invoice` (domyślnie), `correction`, `advance`, `final` | `RodzajFaktury` VAT / KOR / ZAL / ROZ |
+| `type` | nie | `invoice` (domyślnie), `correction`, `advance`, `final`, `kor_zal`, `kor_roz` | `RodzajFaktury` VAT / KOR / ZAL / ROZ / KOR_ZAL / KOR_ROZ |
 | `number` | tak | Numer faktury | `P_2` |
 | `issue_date` | tak | Data wystawienia `RRRR-MM-DD` | `P_1` |
 | `sale_date` | nie | Data sprzedaży, jeśli inna niż data wystawienia | `P_6` |
@@ -243,12 +256,13 @@ Obok każdego pliku JSON leży wygenerowany z niego XML.
 | `currency`, `fx_rate` | nie | Waluta (domyślnie PLN) i kurs PLN, gdy jest VAT w walucie obcej | `KodWaluty`, `P_14_xW` |
 | `seller` | tak | `name`, `tax_id` (NIP), `address.line1` (ulica), `address.line2` (kod i miasto) | `Podmiot1` |
 | `buyer` | tak | `name`, `tax_id`, `country`, `address` | `Podmiot2` |
-| `lines[]` | zależy od typu | `description`, `qty`, `unit`, `unit_net` (lub `net`), `vat_rate` | `FaWiersz` |
+| `podmiot3` (lub `recipient`) | nie | Odbiorca inny niż nabywca: `name`, `tax_id` lub `id_wew`, `address`, `role` (`odbiorca`=2, `jst`=8, `gv`=10 lub 1..11) | `Podmiot3`, `Podmiot2/JST`, `Podmiot2/GV` |
+| `lines[]` | zależy od typu | `description`, `qty`, `unit`, `unit_net` (lub `net`), `vat_rate`, opcjonalnie `gtu` (`GTU_01`..`GTU_13`) | `FaWiersz`, `FaWiersz/GTU` |
 | `due_date`, `iban` | nie | Termin płatności i numer konta | `Platnosc` |
 | `exemption_basis` | przy `zw` | Podstawa zwolnienia | `P_19A` |
 | `split_payment`, `cash_method`, `self_billing` | nie | `true`: podzielona płatność / metoda kasowa / samofakturowanie | `P_18A`, `P_16`, `P_17` |
 
-### Pola dla korekty (`type: "correction"`)
+### Pola dla korekt (`type: "correction" | "kor_zal" | "kor_roz"`)
 
 | Pole | Opis | Pole w FA(3) |
 | :--- | :--- | :--- |
@@ -258,6 +272,7 @@ Obok każdego pliku JSON leży wygenerowany z niego XML.
 | `lines` | Pozycje po korekcie; `[]` oznacza korektę do zera | `FaWiersz` |
 | `reason` | Przyczyna korekty | `PrzyczynaKorekty` |
 | `correction_effect` | 1: w dacie faktury pierwotnej, 2: w dacie korekty (domyślnie), 3: inna | `TypKorekty` |
+| `advances[]` (wymagane dla `kor_roz`) | Referencje do zaliczek (`number` lub `ksef_number`) | `FakturaZaliczkowa` |
 
 Sumy (`P_13_x`, `P_14_x`, `P_15`) to **różnica**: stan po korekcie minus stan przed.
 
@@ -265,11 +280,11 @@ Sumy (`P_13_x`, `P_14_x`, `P_15`) to **różnica**: stan po korekcie minus stan 
 
 | Pole | Opis | Pole w FA(3) |
 | :--- | :--- | :--- |
-| `order_lines` | Całe zamówienie albo umowa | `Zamowienie/ZamowienieWiersz` |
+| `order_lines` | Całe zamówienie albo umowa (opcjonalnie z `gtu`) | `Zamowienie/ZamowienieWiersz` (`GTUZ`) |
 | `paid` | Otrzymana kwota brutto | `P_15` |
 | `paid_date` | Data otrzymania zapłaty | `P_6`, `Platnosc/DataZaplaty` |
 
-VAT liczony jest od kwoty brutto: kwota × stawka / (100 + stawka), zgodnie z art. 106f ust. 1 pkt 3 ustawy o VAT. Przy kilku stawkach wpłata dzielona jest proporcjonalnie do wartości brutto zamówienia w każdej stawce.
+VAT liczony jest od kwoty brutto: kwota * stawka / (100 + stawka), zgodnie z art. 106f ust. 1 pkt 3 ustawy o VAT. Przy kilku stawkach wpłata dzielona jest proporcjonalnie do wartości brutto zamówienia w każdej stawce.
 
 ### Pola dla rozliczenia (`type: "final"`)
 
@@ -280,14 +295,16 @@ VAT liczony jest od kwoty brutto: kwota × stawka / (100 + stawka), zgodnie z ar
 
 Sumy to wartość zamówienia **pomniejszona o zaliczki**, a `P_15` to kwota pozostała do zapłaty.
 
-### Nabywca
+### Nabywca i Podmiot3
 
-| Kto kupuje | Co podać | Co trafia do XML |
+| Kto kupuje / odbiera | Co podać | Co trafia do XML |
 | :--- | :--- | :--- |
 | Polska firma | `tax_id` = NIP | `NIP` |
 | Firma z UE | `country` (np. `DE`) i `tax_id` = numer VAT UE | `KodUE` + `NrVatUE` |
 | Firma spoza UE | `country` i `tax_id` | `KodKraju` + `NrID` |
 | Osoba prywatna | bez `tax_id` | `BrakID` |
+| Jednostka podrzędna JST | w `podmiot3`: `role: "jst"` (8), `tax_id` (NIP) lub `id_wew` | `Podmiot2/JST=1` + `Podmiot3` (`Rola=8`) |
+| Członek grupy VAT | w `podmiot3`: `role: "gv"` (10), `tax_id` (NIP) lub `id_wew` | `Podmiot2/GV=1` + `Podmiot3` (`Rola=10`) |
 
 ### Stawki VAT (`vat_rate`)
 
@@ -298,7 +315,7 @@ Sumy to wartość zamówienia **pomniejszona o zaliczki**, a `P_15` to kwota poz
 | `5` | stawka obniżona | `P_13_3` / `P_14_3` |
 | `0 KR` / `0 WDT` / `0 EX` | 0%: w kraju / WDT / eksport | `P_13_6_1` / `_2` / `_3` |
 | `zw` | zwolnione (wymaga `exemption_basis`) | `P_13_7` |
-| `np I` | niepodlegające opodatkowaniu – poza krajem | `P_13_8` |
+| `np I` | niepodlegające opodatkowaniu - poza krajem | `P_13_8` |
 | `np II` | usługi z art. 100 ust. 1 pkt 4 (np. usługi dla firm z UE) | `P_13_9` |
 | `oo` | odwrotne obciążenie | `P_13_10` |
 
@@ -306,17 +323,12 @@ VAT liczony jest od **sumy netto w danej stawce** i zaokrąglany do grosza.
 
 ### Co sprawdza walidacja
 
-1. **Oficjalny XSD FA(3)**: struktura, kolejność i wymagalność pól, dozwolone wartości, formaty dat, kwot, NIP i numeru KSeF.
-2. **Sumy**: zwykła faktura i korekta. Pozycje (dla korekty: po minus przed) muszą zgadzać się z `P_13_x`.
-3. **VAT**: `P_14_x` = stawka × netto; dla zaliczki VAT liczony jest od brutto.
+1. **Oficjalny XSD FA(3) (`xsd/1-0E/`)**: struktura, kolejność i wymagalność pól, dozwolone wartości, formaty dat, kwot, NIP, IDWew, GTU i numeru KSeF.
+2. **Sumy**: pozycje (dla korekt `KOR`, `KOR_ZAL`, `KOR_ROZ`: stan po minus stan przed) muszą zgadzać się z `P_13_x`.
+3. **VAT**: `P_14_x` = stawka * netto; dla zaliczki VAT liczony jest od brutto.
 4. **Należność**: `P_15` = suma `P_13_x` i `P_14_x`.
-5. **Spójność**: korekta musi wskazywać fakturę korygowaną, zaliczka nie może przekraczać wartości zamówienia, a rozliczenie musi wskazywać zaliczki.
-6. **NIP**: suma kontrolna NIP sprzedawcy i nabywcy.
-
-**Testy wykonane przy tworzeniu skilla:**
-- Oficjalny XSD przechodzi 12 faktur: krajowa 23%, mieszane stawki, zwolniona, usługa dla firmy z UE, w EUR, dla osoby prywatnej, korekta ceny, korekta do zera, dwie zaliczki, dwa rozliczenia (zaliczka w KSeF i poza nim).
-- Ręcznie zepsute pliki są wykrywane.
-- Odczyt XML i ponowne zbudowanie daje identyczny plik.
+5. **Spójność referencji**: `KOR`, `KOR_ZAL` i `KOR_ROZ` muszą zawierać `DaneFaKorygowanej`, `ROZ` i `KOR_ROZ` muszą zawierać `FakturaZaliczkowa`, a `ZAL` musi zawierać `Zamowienie` o wartości nie mniejszej niż `P_15`.
+6. **NIP**: suma kontrolna NIP sprzedawcy, nabywcy oraz odbiorcy w `Podmiot3`.
 
 **Uwaga:** zgodność z XSD nie gwarantuje poprawności podatkowej, np. tego, że wybrałeś właściwą stawkę.
 
@@ -327,7 +339,7 @@ VAT liczony jest od **sumy netto w danej stawce** i zaokrąglany do grosza.
 - [Broszura informacyjna MF dotycząca struktury logicznej FA(3)](https://ksef.podatki.gov.pl/media/jknpcymf/broszura-informacyjna-dotyczaca-struktury-logicznej-fa-3-04032026.pdf)
 - [Information sheet on the FA(3) logical structure (EN)](https://ksef.podatki.gov.pl/media/4u1bmhx4/information-sheet-on-the-fa-3-logical-structure.pdf)
 - Schemat XSD: `http://crd.gov.pl/wzor/2025/06/25/13775/schemat.xsd`
-- [Portal KSeF – podatki.gov.pl](https://ksef.podatki.gov.pl)
+- [Portal KSeF - podatki.gov.pl](https://ksef.podatki.gov.pl)
 
 ---
 

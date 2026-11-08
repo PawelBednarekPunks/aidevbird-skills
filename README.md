@@ -52,7 +52,7 @@ Every skill is written to be **token-lean**: a description under 300 characters 
 | **[`xlsx-toolkit`](./skills/xlsx-toolkit/SKILL.md)** | **Office** | Create, edit and check Excel/CSV files with live formulas. Ships `inspect_xlsx.py` to find formula errors. |
 | **[`invoice-processing`](./skills/invoice-processing/SKILL.md)** | **Finance** | Invoices → JSON → spreadsheet. `validate_invoice.py` checks totals, VAT, Polish NIP, IBAN and duplicates. |
 | **[`appstore-payouts-to-excel`](./skills/appstore-payouts-to-excel/SKILL.md)** | **Finance · Indie** | App Store Connect reports → Excel by currency, country and app, converted at NBP rates. |
-| **[`ksef-invoice`](./skills/ksef-invoice/README.md)** | **Finance · 🇵🇱** | Polish KSeF e-invoices (FA(3) XML): invoices, corrections, advances and final settlements, validated against the official Ministry of Finance XSD. [Poradnik po polsku](./skills/ksef-invoice/README.md). |
+| **[`ksef-invoice`](./skills/ksef-invoice/README.md)** | **Finance · 🇵🇱** | Polish KSeF e-invoices (FA(3) XML): invoices, advances, settlements and their corrections (`KOR`, `KOR_ZAL`, `KOR_ROZ`), `GTU_01..13`, `Podmiot3` (JST/GV), offline XSD validation and CSV reports. [Poradnik po polsku](./skills/ksef-invoice/README.md). |
 
 ---
 
