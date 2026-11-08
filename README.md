@@ -8,6 +8,10 @@ Curated, zero-fluff **AI Agent Skills** designed for real-world engineering team
 
 Maintained by **[AiDevBird](https://x.com/aidevbird)** ([@aidevbird](https://x.com/aidevbird)).
 
+![ksef-invoice demo: install with npx, then issue an invoice, correction, advance and final settlement in plain Polish](assets/ksef-invoice-demo.gif)
+
+*Demo: [`ksef-invoice`](./skills/ksef-invoice/README.md) — Polish KSeF e-invoices from install to Excel. Script outputs are real; the agent dialogue is staged.*
+
 ---
 
 ## ⚡ Quick Start: Installation

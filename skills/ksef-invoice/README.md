@@ -2,6 +2,10 @@
 
 Skill dla Claude Code, Cursora, Codexa i innych agentów AI. **Wystawia, sprawdza i odczytuje faktury KSeF** w formacie FA(3), w tym **faktury zwykłe, korygujące, zaliczkowe i rozliczające**. Każdy plik jest sprawdzany na **oficjalnym schemacie XSD Ministerstwa Finansów**, a nie na „pamięci” modelu AI.
 
+![Demo: instalacja przez npx, faktura, korekta, zaliczka, rozliczenie, odrzucony plik i zestawienie w Excelu](../../assets/ksef-invoice-demo.gif)
+
+*Demo: wyniki skryptu są prawdziwe, dialog z agentem jest odegrany, a dane fikcyjne.*
+
 > Ten plik jest dla ludzi. Agent czyta tylko krótki [`SKILL.md`](SKILL.md), żeby nie zużywać tokenów.
 
 **Spis treści:** [Czym jest KSeF](#czym-jest-ksef-w-30-sekund) · [Co daje skill](#co-daje-ten-skill) · [Instalacja krok po kroku](#instalacja-krok-po-kroku) · [Pierwsza faktura](#pierwsza-faktura--krok-po-kroku) · [Gotowe polecenia](#gotowe-polecenia-do-skopiowania) · [Jak wysłać do KSeF](#jak-wysłać-fakturę-do-ksef) · [Problemy](#gdy-coś-nie-działa) · [Dla zaawansowanych](#dla-zaawansowanych-ręczne-użycie-skryptu)
