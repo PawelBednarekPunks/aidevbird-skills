@@ -1,31 +1,33 @@
 ---
 name: ksef-invoice
-description: Build, validate and read Polish KSeF e-invoices (FA(3) XML) — invoices, corrections, advances and final settlements — against the official schema. Use for e-faktura, KSeF, korekta, zaliczka or a rejected invoice.
+description: Wystawia, waliduje, odczytuje i koryguje e-faktury KSeF (FA(3) XML) - faktury VAT, korekty, zaliczki i rozliczenia - zgodnie ze schematem XSD. Użyj przy e-fakturze, KSeF, korekcie, zaliczce lub odrzuconym pliku XML.
 ---
 
 # KSeF Invoice (FA(3))
 
-Script: `python scripts/ksef_fa3.py build|validate|read ...` (relative to this skill). Needs `pip install lxml`; the official XSD is fetched once from crd.gov.pl. Answer in Polish unless the user writes otherwise.
+Skrypt: `python scripts/ksef_fa3.py build|validate|read|correct ...` (względem katalogu skilla). Wymaga `pip install lxml`. Schemat XSD FA(3) w wersji `1-0E` jest wbudowany w `xsd/1-0E/` (sieć z `crd.gov.pl` tylko jako fallback). Odpowiadaj po polsku, chyba że użytkownik pisze w innym języku.
 
-Seller data: if `ksef-firma.json` exists in the working folder, take `seller` and `iban` from it. If not, ask once and offer to save it there. Invoice number: propose the next one from existing XML files in the folder (`read` them), let the user confirm.
+Dane sprzedawcy: jeśli w katalogu roboczym jest `ksef-firma.json`, weź z niego `seller` i `iban`. Jeśli nie ma, zapytaj raz i zaproponuj zapisanie. Numer faktury: zaproponuj kolejny na podstawie plików XML w folderze (`read`), poproś o potwierdzenie.
 
-Pick `type` — examples in `examples/<type>.json`:
-- `invoice` — normal invoice: `lines[]`.
-- `correction` — korekta: `corrects` {number, issue_date, ksef_number if it was in KSeF}, `lines_before` (original lines), `lines` (correct state; `[]` = full cancel), `reason`, `correction_effect` (1 original date, 2 correction date — default, 3 other). Easiest: `read` the original XML, copy its lines to `lines_before`, edit `lines`.
-- `advance` — zaliczka: `order_lines` (whole order), `paid` (gross received), `paid_date`. The script splits the payment over VAT rates.
-- `final` — rozliczenie after advances: `lines` (whole order), `advances[]` {number, ksef_number, by_rate}. Get `by_rate` from `read` of each advance XML.
+Wybierz `type` (przykłady w `examples/<type>.json`):
+- `invoice` (VAT): zwykła faktura, `lines[]`.
+- `correction` (KOR): korekta zwykłej faktury, `corrects` {number, issue_date, ksef_number}, `lines_before` (stan przed), `lines` (stan po, `[]` = korekta do zera), `reason`, `correction_effect` (1 w dacie pierwotnej, 2 w dacie korekty - domyślnie, 3 inna). Dla faktury z KSeF użyj `ksef_fa3.py correct ORYGINAL.xml ZMIANY.json OUT.xml`.
+- `advance` (ZAL): zaliczka, `order_lines` (całe zamówienie), `paid` (otrzymana kwota brutto), `paid_date`. Skrypt sam dzieli wpłatę na stawki VAT.
+- `final` (ROZ): rozliczenie po zaliczkach, `lines` (całe zamówienie), `advances[]` {number, ksef_number, by_rate}. `by_rate` weź z `read` każdej zaliczki XML.
+- `kor_zal` (KOR_ZAL): korekta zaliczki, szkielet jak `correction` (`corrects` wskazuje korygowaną zaliczkę, `lines_before`, `lines`).
+- `kor_roz` (KOR_ROZ): korekta faktury rozliczającej, szkielet jak `correction` plus `advances[]` {number, ksef_number} (`FakturaZaliczkowa`).
 
-Common fields: `seller` {name, tax_id, address.line1/line2}; `buyer` (PL NIP, EU `country`+VAT no., other `country`+ID, private person: no `tax_id`); `lines[]` {description, qty, unit, unit_net or net, vat_rate: `23` `8` `5` `0 KR` `0 WDT` `0 EX` `zw` `np I` `np II` `oo`}; optional `sale_date`, `due_date`, `iban`, `place`, `currency`+`fx_rate`, `exemption_basis` (required for `zw`), `split_payment`, `cash_method`, `self_billing`.
+Pola wspólne: `seller` {name, tax_id, address.line1/line2}; `buyer` (PL NIP, UE `country`+VAT, inny `country`+ID, osoba prywatna: bez `tax_id`); `podmiot3[]` lub `recipient` {name, tax_id lub id_wew, address, role: `odbiorca` (2), `jst` (8 - ustawia `JST=1` w `Podmiot2`), `gv` (10 - ustawia `GV=1` w `Podmiot2`) lub 1..11}; `lines[]` {description, qty, unit, unit_net lub net, vat_rate: `23` `8` `5` `0 KR` `0 WDT` `0 EX` `zw` `np I` `np II` `oo`, opcjonalnie `gtu`: `GTU_01`..`GTU_13` (`FaWiersz/GTU`, w zaliczce `ZamowienieWiersz/GTUZ`)}; opcjonalnie `sale_date`, `due_date`, `iban`, `place`, `currency`+`fx_rate`, `exemption_basis` (wymagane dla `zw`), `split_payment`, `cash_method`, `self_billing`.
 
-Steps:
-1. Fill the JSON. Ask for anything missing — never invent a NIP, number, date, amount or KSeF number.
-2. `ksef_fa3.py build invoice.json FV-1-11-2026.xml` (file name = number with `/` → `-`).
-3. Show: type, number, buyer, net/VAT/gross per rate (negative for corrections), file path, and the next step: upload the XML in their KSeF app or accounting software.
+Kroki:
+1. Uzupełnij JSON. Dopytaj o brakujące dane - nigdy nie zmyślaj NIP, numeru, daty, kwoty ani numeru KSeF.
+2. Zbuduj XML: `ksef_fa3.py build invoice.json FV-1-11-2026.xml` albo skoryguj oryginał z KSeF: `ksef_fa3.py correct FV-1-11-2026.xml zmiany.json FVK-1-11-2026.xml`.
+3. Pokaż: typ, numer, nabywcę, netto/VAT/brutto wg stawek (ujemne przy korekcie zmniejszającej), ścieżkę pliku oraz następny krok: wysyłka XML w Aplikacji Podatnika KSeF lub programie księgowym.
 
-Validate any XML: `ksef_fa3.py validate file.xml` — official XSD, sums vs lines, VAT, P_15, NIP. Explain each issue in plain Polish with the fix.
-Read: `ksef_fa3.py read file.xml` → JSON (same shape as input). For many files, export with `invoice-processing` / `xlsx-toolkit`.
+Walidacja (plik, katalog lub glob): `ksef_fa3.py validate sciezka [--csv raport.csv]` - lokalny XSD, sumy względem pozycji, VAT, P_15, NIP, referencje korekt i zaliczek. Wyjaśnij każdy błąd prostym językiem wraz z poprawką.
+Odczyt: `ksef_fa3.py read plik.xml` -> JSON. Przy wielu plikach eksportuj ze skillami `invoice-processing` i `xlsx-toolkit`.
 
-Hard rules:
-- Not supported: correcting an advance (KOR_ZAL) or a final invoice (KOR_ROZ), margin schemes, new vehicles, JST/VAT groups, attachments. Say so.
-- Never send to KSeF, never ask for or handle a KSeF token or certificate.
-- VAT rate, exemption basis, reverse charge and correction date are the user's or accountant's decision — flag doubts, don't decide.
+Zasady bezwzględne:
+- Nieobsługiwane: procedura marży, nowe środki transportu, załączniki. Poinformuj o tym wprost.
+- Nigdy nie wysyłaj plików do KSeF, nie proś o token ani certyfikat KSeF.
+- Stawka VAT, podstawa zwolnienia, odwrotne obciążenie, kody GTU i data ujęcia korekty to decyzja podatnika lub księgowego - sygnalizuj wątpliwości, nie decyduj za użytkownika.

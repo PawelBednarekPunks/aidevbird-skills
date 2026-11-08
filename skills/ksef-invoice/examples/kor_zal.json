@@ -1,0 +1,65 @@
+{
+  "number": "FZK/1/11/2026",
+  "issue_date": "2026-11-12",
+  "sale_date": "2026-11-12",
+  "currency": "PLN",
+  "place": "Warszawa",
+  "seller": {
+    "name": "Jan Kowalski Software",
+    "tax_id": "1234560007",
+    "address": {
+      "line1": "ul. Prosta 1/2",
+      "line2": "00-001 Warszawa"
+    },
+    "email": "jan@example.com"
+  },
+  "buyer": {
+    "name": "Acme sp. z o.o.",
+    "tax_id": "9876540016",
+    "country": "PL",
+    "address": {
+      "line1": "ul. Długa 5",
+      "line2": "30-001 Kraków"
+    }
+  },
+  "iban": "PL61 1090 1014 0000 0712 1981 2874",
+  "type": "kor_zal",
+  "reason": "Częściowy zwrot zaliczki",
+  "corrects": {
+    "number": "FZ/1/11/2026",
+    "issue_date": "2026-11-08",
+    "ksef_number": "1234560007-20261105-ABCDEF-123456-0F"
+  },
+  "lines_before": [
+    {
+      "description": "Zaliczka na aplikację mobilną",
+      "qty": 1,
+      "unit": "szt.",
+      "unit_net": 3736.92,
+      "vat_rate": "23"
+    },
+    {
+      "description": "Zaliczka na szkolenie",
+      "qty": 1,
+      "unit": "szt.",
+      "unit_net": 373.69,
+      "vat_rate": "8"
+    }
+  ],
+  "lines": [
+    {
+      "description": "Zaliczka na aplikację mobilną",
+      "qty": 1,
+      "unit": "szt.",
+      "unit_net": 2736.92,
+      "vat_rate": "23"
+    },
+    {
+      "description": "Zaliczka na szkolenie",
+      "qty": 1,
+      "unit": "szt.",
+      "unit_net": 373.69,
+      "vat_rate": "8"
+    }
+  ]
+}
